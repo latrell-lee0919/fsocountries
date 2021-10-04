@@ -10,33 +10,27 @@ const Filter = (props) => {
 }
 
 const Countries = (props) => {
-  console.log(props.count)
-  if(props.count === 1) {
+  console.log(props)
+  if(props.filtered.length === 1) {
     return (
       <div>
         <h1>{props.name.common}</h1>
-        <div>capital {props.capital[0]}</div>
+        <div>capital {props.capital}</div>
         <div>population {props.population}</div>
         <h2>languages</h2>
-        {props.languages.map(language => {
+        {/* {props.languages.map(language => {
           <ul>{language}</ul>
-        })}
-        {props.flag}
-      </div>
-    )
-  } else if (props.count <= 10) {
-    return (
-      <div>
-        {props.name.common}
+        })} */}
+        <img src={props.flags.png} alt={props.name.common}/>
       </div>
     )
   } else {
     return (
       <div>
-        Too many matches, specify another filter
+        {props.name.common}
       </div>
     )
-  }
+  } 
 }
 
 const App = () => {
@@ -50,20 +44,38 @@ const App = () => {
   useEffect(() => {
     axios.get('https://restcountries.com/v3.1/all')
     .then(response => {
-      console.log(response.data)
+      // console.log(response.data)
       setCountries(response.data)
     })
   }, [])
 
-  return (
-    <div>
-      <Filter newFilter={newFilter} handleFilterChange={handleFilterChange}/>
-      {countries.filter(country => country.name.common.toUpperCase()
-      .includes(newFilter.toUpperCase()))
-      .map(country => 
-      <Countries key={country.area} name={country.name}/>)}
-    </div>
-  )
+  var filtered = countries.filter(country => country.name.common.toUpperCase().includes(newFilter.toUpperCase()))
+
+  if (filtered.length > 10) {
+    return (
+      <div>
+        <Filter newFilter={newFilter} handleFilterChange={handleFilterChange}/>
+        Too many matches, specify another filter
+      </div>
+    )
+  } else {
+    return (
+      <div>
+        <Filter newFilter={newFilter} handleFilterChange={handleFilterChange}/>
+        {filtered.map(country => 
+        <Countries 
+        key={country.cca2} 
+        name={country.name} 
+        population={country.population} 
+        capital={country.capital}
+        languages={country.languages}
+        flags={country.flags} 
+        filtered={filtered} 
+        filter={newFilter} 
+        />)}
+      </div>
+    )
+  }
 }
 
 export default App;
