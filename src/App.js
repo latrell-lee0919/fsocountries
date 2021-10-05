@@ -15,7 +15,6 @@ const Countries = (props) => {
   const languageItems = langArray.map((language) =>
     <li>{language}</li>
   );
-  console.log(languages)
   if(props.filtered.length === 1) {
     return (
       <div>
@@ -28,9 +27,11 @@ const Countries = (props) => {
       </div>
     )
   } else {
+    console.log(props)
     return (
       <div>
         {props.name.common}
+        <button onClick={props.handleShowView}>show</button>
       </div>
     )
   } 
@@ -39,9 +40,15 @@ const Countries = (props) => {
 const App = () => {
   const [countries, setCountries] = useState([]);
   const [newFilter, setNewFilter] = useState('');
+  const [showCountry, setShowCountry] = useState(false);
 
   const handleFilterChange = (event) => {
     setNewFilter(event.target.value);
+  }
+
+  const handleShowView = () => {
+    setShowCountry(!showCountry)
+    console.log(showCountry)
   }
 
   useEffect(() => {
@@ -73,7 +80,8 @@ const App = () => {
         languages={country.languages}
         flags={country.flags} 
         filtered={filtered} 
-        filter={newFilter} 
+        filter={newFilter}
+        handleShowView={handleShowView()} 
         />)}
       </div>
     )
