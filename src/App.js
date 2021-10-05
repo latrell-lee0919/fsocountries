@@ -9,25 +9,38 @@ const Filter = (props) => {
   )
 }
 
-const Countries = (props) => {
+const SingleCountry = (props) => {
+  console.log(props)
   const languages = props.languages
   const langArray = Object.values(languages);
   const languageItems = langArray.map((language) =>
     <li>{language}</li>
   );
+  return (
+    <div>
+      <h1>{props.name.common}</h1>
+      <div>capital {props.capital}</div>
+      <div>population {props.population}</div>
+      <h2>languages</h2>
+      <ul>{languageItems}</ul>
+      <img src={props.flags.png} alt={props.name.common}/>
+    </div>
+  )
+}
+
+const Countries = (props) => {
+  console.log("props ", props)
   if(props.filtered.length === 1) {
     return (
-      <div>
-        <h1>{props.name.common}</h1>
-        <div>capital {props.capital}</div>
-        <div>population {props.population}</div>
-        <h2>languages</h2>
-        <ul>{languageItems}</ul>
-        <img src={props.flags.png} alt={props.name.common}/>
-      </div>
+      <SingleCountry 
+      name={props.name}
+      capital={props.capital}
+      population={props.population}
+      languages={props.languages}
+      flags={props.flags}
+      />
     )
   } else {
-    console.log(props)
     return (
       <div>
         {props.name.common}
@@ -81,7 +94,7 @@ const App = () => {
         flags={country.flags} 
         filtered={filtered} 
         filter={newFilter}
-        handleShowView={handleShowView()} 
+        handleShowView={handleShowView} 
         />)}
       </div>
     )
