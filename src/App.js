@@ -10,7 +10,12 @@ const Filter = (props) => {
 }
 
 const Countries = (props) => {
-  console.log(props)
+  const languages = props.languages
+  const langArray = Object.values(languages);
+  const languageItems = langArray.map((language) =>
+    <li>{language}</li>
+  );
+  console.log(languages)
   if(props.filtered.length === 1) {
     return (
       <div>
@@ -18,9 +23,7 @@ const Countries = (props) => {
         <div>capital {props.capital}</div>
         <div>population {props.population}</div>
         <h2>languages</h2>
-        {/* {props.languages.map(language => {
-          <ul>{language}</ul>
-        })} */}
+        <ul>{languageItems}</ul>
         <img src={props.flags.png} alt={props.name.common}/>
       </div>
     )
@@ -44,7 +47,6 @@ const App = () => {
   useEffect(() => {
     axios.get('https://restcountries.com/v3.1/all')
     .then(response => {
-      // console.log(response.data)
       setCountries(response.data)
     })
   }, [])
