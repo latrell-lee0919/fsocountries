@@ -12,14 +12,23 @@ const Filter = (props) => {
 }
 
 const SingleCountry = (props) => {
-  //console.log(props)
   const languages = props.languages
   const langArray = Object.values(languages);
   const languageItems = langArray.map((language) =>
     <li>{language}</li>
   );
+  const [weather, setWeather] = useState([]);
+  useEffect(() => {
+    axios.get(`http://api.weatherstack.com/current?access_key=${api_key}&query=${props.capital}`)
+    .then(response => {
+      setWeather(response.data.current)
+    })
+  }, [props.capital])
+
+  const weatherCopy = {...weather}
+  // const icon = weatherCopy.weather_icons[0].toString()
   
-  console.log(props.weather)
+  // console.log(icon)
 
   if(props.filtered.length === 1) {
     return (
@@ -31,9 +40,9 @@ const SingleCountry = (props) => {
         <ul>{languageItems}</ul>
         <img src={props.flags.png} alt={props.name.common}/>
         <h2>Weather in {props.capital}</h2>
-        <div><b>temperature:</b> {props.weather.temperature} celcius</div>
-        <img src={props.weather.weather_icons[0]} alt={props.weather.weather_descriptions}/>
-        <div><b>wind:</b> {props.weather.wind_speed} mph direction {props.weather.wind_dir}</div>
+        <div><b>temperature:</b> {weatherCopy.temperature} celcius</div>
+        {/* <img src={icon} alt={props.capital}/> */}
+        <div><b>wind:</b> {weatherCopy.wind_speed} mph direction {weatherCopy.wind_dir}</div>
       </div>
     )
   } else {
@@ -52,15 +61,11 @@ const SingleCountry = (props) => {
 }
 
 const Countries = (props) => {
-  const [weather, setWeather] = useState([]);
-  const weatherCopy = {...weather}
-
-  useEffect(() => {
-    axios.get(`http://api.weatherstack.com/current?access_key=${api_key}&query=${props.capital}`)
-    .then(response => {
-      setWeather(response.data.current)
-    })
-  }, [props.capital])
+  const [showCountry, setShowCountry] = useState(false);
+  const handleShowView = () => {
+    setShowCountry(!showCountry)
+    console.log(props)
+  }
 
   if(props.filtered.length === 1) {
     return (
@@ -71,7 +76,6 @@ const Countries = (props) => {
       languages={props.languages}
       flags={props.flags}
       filtered={props.filtered}
-      weather={weatherCopy}
       />
     )
   } 
@@ -79,7 +83,7 @@ const Countries = (props) => {
     return (
       <div>
         {props.name.common}
-        <button onClick={props.handleShowView}>show</button>
+        <button onClick={handleShowView}>show </button> 
       </div>
     )
     }
@@ -88,14 +92,9 @@ const Countries = (props) => {
 const App = () => {
   const [countries, setCountries] = useState([]);
   const [newFilter, setNewFilter] = useState('');
-  const [showCountry, setShowCountry] = useState(false);
 
   const handleFilterChange = (event) => {
     setNewFilter(event.target.value);
-  }
-
-  const handleShowView = () => {
-    setShowCountry(!showCountry)
   }
 
   useEffect(() => {
@@ -128,7 +127,6 @@ const App = () => {
         flags={country.flags} 
         filtered={filtered} 
         filter={newFilter}
-        handleShowView={handleShowView} 
         />)}
       </div>
     )
