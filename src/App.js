@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
+const api_key = process.env.REACT_APP_API_KEY
+
 const Filter = (props) => {
   return (
     <div>
@@ -10,26 +12,56 @@ const Filter = (props) => {
 }
 
 const SingleCountry = (props) => {
-  console.log(props)
+  //console.log(props)
   const languages = props.languages
   const langArray = Object.values(languages);
   const languageItems = langArray.map((language) =>
     <li>{language}</li>
   );
-  return (
-    <div>
-      <h1>{props.name.common}</h1>
-      <div>capital {props.capital}</div>
-      <div>population {props.population}</div>
-      <h2>languages</h2>
-      <ul>{languageItems}</ul>
-      <img src={props.flags.png} alt={props.name.common}/>
-    </div>
-  )
+  
+  console.log(props.weather)
+
+  if(props.filtered.length === 1) {
+    return (
+      <div>
+        <h1>{props.name.common}</h1>
+        <div>capital {props.capital}</div>
+        <div>population {props.population}</div>
+        <h2>languages</h2>
+        <ul>{languageItems}</ul>
+        <img src={props.flags.png} alt={props.name.common}/>
+        <h2>Weather in {props.capital}</h2>
+        <div><b>temperature:</b> {props.weather.temperature} celcius</div>
+        <img src={props.weather.weather_icons[0]} alt={props.weather.weather_descriptions}/>
+        <div><b>wind:</b> {props.weather.wind_speed} mph direction {props.weather.wind_dir}</div>
+      </div>
+    )
+  } else {
+    return (
+      <div>
+        <h1>{props.name.common}</h1>
+        <div>capital {props.capital}</div>
+        <div>population {props.population}</div>
+        <h2>languages</h2>
+        <ul>{languageItems}</ul>
+        <img src={props.flags.png} alt={props.name.common}/>
+      </div>
+    )
+  }
+  
 }
 
 const Countries = (props) => {
-  console.log("props ", props)
+  const [weather, setWeather] = useState([]);
+  const weatherCopy = {...weather}
+
+  useEffect(() => {
+    axios.get(`http://api.weatherstack.com/current?access_key=${api_key}&query=${props.capital}`)
+    .then(response => {
+      setWeather(response.data.current)
+    })
+  }, [props.capital])
+
   if(props.filtered.length === 1) {
     return (
       <SingleCountry 
@@ -38,16 +70,19 @@ const Countries = (props) => {
       population={props.population}
       languages={props.languages}
       flags={props.flags}
+      filtered={props.filtered}
+      weather={weatherCopy}
       />
     )
-  } else {
+  } 
+  else {
     return (
       <div>
         {props.name.common}
         <button onClick={props.handleShowView}>show</button>
       </div>
     )
-  } 
+    }
 }
 
 const App = () => {
@@ -61,7 +96,6 @@ const App = () => {
 
   const handleShowView = () => {
     setShowCountry(!showCountry)
-    console.log(showCountry)
   }
 
   useEffect(() => {
