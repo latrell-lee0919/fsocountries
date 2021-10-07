@@ -61,10 +61,9 @@ const SingleCountry = (props) => {
 }
 
 const Countries = (props) => {
-  const [showCountry, setShowCountry] = useState(false);
   const handleShowView = () => {
-    setShowCountry(!showCountry)
-    console.log(props)
+    props.setNewFilter(props.name.common)
+    console.log(props.name.common)
   }
 
   if(props.filtered.length === 1) {
@@ -92,7 +91,7 @@ const Countries = (props) => {
 const App = () => {
   const [countries, setCountries] = useState([]);
   const [newFilter, setNewFilter] = useState('');
-
+  
   const handleFilterChange = (event) => {
     setNewFilter(event.target.value);
   }
@@ -127,6 +126,7 @@ const App = () => {
         flags={country.flags} 
         filtered={filtered} 
         filter={newFilter}
+        setNewFilter={setNewFilter}
         />)}
       </div>
     )
