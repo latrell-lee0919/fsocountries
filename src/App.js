@@ -91,7 +91,7 @@ const Countries = (props) => {
 const App = () => {
   const [countries, setCountries] = useState([]);
   const [newFilter, setNewFilter] = useState('');
-  
+
   const handleFilterChange = (event) => {
     setNewFilter(event.target.value);
   }
